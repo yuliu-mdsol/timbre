@@ -21,6 +21,11 @@
 ;; * Document changes from v3.
 ;; * Update bundled appenders (?).
 ;; * Update docs.
+;;
+;; * Investigate better encore/Cljs interplay: fns?
+;; * Do runtime level check even if a compile-time level is in effect if the
+;;   provided `log` level arg is not immediately recognized (e.g. it may be a
+;;   runtime level form that first requires eval).
 
 ;;;; Public utils
 
@@ -75,9 +80,9 @@
   "14-Jul-07 16:42:11 localhost INFO [my-app.foo.bar] - Hello world"
   (fn [{:keys [ns ; & Any other appender args
               ;; These are delays:
-              timestamp* hostname* level-name* args-str* stacktrace*]}]
-    (str @timestamp* " " @hostname* " " @level-name* " "
-      "[" ns "] - " @args-str* @stacktrace*)))
+              timestamp_ hostname_ level-name_ args-str_ stacktrace_]}]
+    (str @timestamp_ " " @hostname_ " " @level-name_ " "
+      "[" ns "] - " @args-str_ @stacktrace_)))
 
 (defn fmt-appender-args "Formats appender arguments as a message string."
   [fmt-fn ; `(apply <fmt-fn> args)`: format, print-str, pr-str, etc.
@@ -91,12 +96,12 @@
     (pattern-fn
       (merge appender-args
         ;; Delays since user pattern may/not want any of these:
-        {:hostname*   (delay (get-hostname))
-         :timestamp*  (delay (.format (encore/simple-date-format timestamp-pattern
+        {:hostname_   (delay (get-hostname))
+         :timestamp_  (delay (.format (encore/simple-date-format timestamp-pattern
                                         {:locale timestamp-locale}) instant))
-         :level-name* (delay (-> level name str/upper-case))
-         :args-str*   (delay (apply fmt-fn args)) ; `args` is non-empty
-         :stacktrace* (delay (fmt-stacktrace throwable "\n" (when no-fonts? {})))}))))
+         :level-name_ (delay (-> level name str/upper-case))
+         :args-str_   (delay (apply fmt-fn args)) ; `args` is non-empty
+         :stacktrace_ (delay (fmt-stacktrace throwable "\n" (when no-fonts? {})))}))))
 
 (comment
   (encore/qbench 1000
