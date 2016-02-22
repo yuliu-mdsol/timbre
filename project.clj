@@ -12,13 +12,13 @@
 
   :dependencies
   [[org.clojure/clojure "1.5.1"]
-   [com.taoensso/encore "2.33.0"]
-   [io.aviso/pretty     "0.1.21"]]
+   [com.taoensso/encore "2.36.0"]
+   [io.aviso/pretty     "0.1.23"]]
 
   :plugins
   [[lein-pprint  "1.1.2"]
    [lein-ancient "0.6.8"]
-   [lein-codox   "0.9.1"]]
+   [lein-codox   "0.9.4"]]
 
   :profiles
   {;; :default [:base :system :user :provided :dev]
